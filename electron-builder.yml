@@ -7,8 +7,7 @@ asarUnpack:
 directories:
   output: "build"
 # Workaround: Don't download prebuilt libraries (GH#2953).
-# Disabled because newer Node.js/Python versions break native module builds.
-# buildDependenciesFromSource: true
+buildDependenciesFromSource: true
 files:
 - "dist/electron/**/*"
 # Don't bundle these files
