@@ -37,10 +37,13 @@ jobs:
           npx asar pack /tmp/extracted /tmp/app.asar
           cp /tmp/app.asar /tmp/MarkText-zh.app/Contents/Resources/app.asar
 
-          # Sign and package
+          # Sign and package (move to separate directory to avoid resource busy)
+          mkdir -p /tmp/dmg-out
           codesign --deep --force --sign - /tmp/MarkText-zh.app
+          sleep 2
           hdiutil create -volname "MarkText-zh" -srcfolder /tmp/MarkText-zh.app \
-            -ov -format UDZO MarkText-zh-arm64.dmg
+            -ov -format UDZO /tmp/dmg-out/MarkText-zh-arm64.dmg
+          cp /tmp/dmg-out/MarkText-zh-arm64.dmg MarkText-zh-arm64.dmg
 
       - name: Upload to Release
         env:
@@ -64,19 +67,21 @@ jobs:
         run: node .electron-vue/build.js
 
       - name: Build Chinese Windows package
+        shell: pwsh
         run: |
           # Download official MarkText Windows release
-          curl -L -o /tmp/marktext-win.zip `
-            "https://github.com/marktext/marktext/releases/download/v0.17.1/marktext-win.zip"
+          $zipPath = "$env:TEMP\marktext-win.zip"
+          $extractPath = "$env:TEMP\marktext-win"
+          Invoke-WebRequest -Uri "https://github.com/marktext/marktext/releases/download/v0.17.1/marktext-win.zip" -OutFile $zipPath
           # Extract
-          Expand-Archive -Path /tmp/marktext-win.zip -DestinationPath /tmp/marktext-win
+          Expand-Archive -Path $zipPath -DestinationPath $extractPath -Force
           # Replace app.asar
-          npx asar extract /tmp/marktext-win/resources/app.asar /tmp/extracted
-          Remove-Item -Recurse -Force /tmp/extracted/dist/electron/
-          Copy-Item -Recurse dist/electron/ /tmp/extracted/dist/electron/
-          npx asar pack /tmp/extracted /tmp/marktext-win/resources/app.asar
+          npx asar extract "$extractPath\resources\app.asar" "$env:TEMP\extracted"
+          Remove-Item -Recurse -Force "$env:TEMP\extracted\dist\electron\" -ErrorAction SilentlyContinue
+          Copy-Item -Recurse dist\electron\ "$env:TEMP\extracted\dist\electron\"
+          npx asar pack "$env:TEMP\extracted" "$extractPath\resources\app.asar"
           # Repackage as ZIP
-          Compress-Archive -Path /tmp/marktext-win/* -DestinationPath MarkText-zh-win.zip
+          Compress-Archive -Path "$extractPath\*" -DestinationPath MarkText-zh-win.zip -Force
 
       - name: Upload to Release
         env:
