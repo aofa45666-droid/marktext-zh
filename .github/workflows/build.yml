@@ -49,6 +49,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          gh release create ${{ github.ref_name }} \
+            MarkText-zh-arm64.dmg \
+            --repo ${{ github.repository }} \
+            --title "${{ github.ref_name }}" \
+            --notes "MarkText v0.17.1 简体中文汉化版" \
+            --latest || \
           gh release upload ${{ github.ref_name }} MarkText-zh-arm64.dmg \
             --repo ${{ github.repository }} --clobber
 
@@ -86,6 +92,12 @@ jobs:
       - name: Upload to Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: pwsh
         run: |
+          gh release create ${{ github.ref_name }} MarkText-zh-win.zip `
+            --repo ${{ github.repository }} `
+            --title "${{ github.ref_name }}" `
+            --notes "MarkText v0.17.1 简体中文汉化版" `
+            --latest 2>&1 | Out-Null
           gh release upload ${{ github.ref_name }} MarkText-zh-win.zip `
             --repo ${{ github.repository }} --clobber
