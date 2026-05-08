@@ -25,22 +25,17 @@ jobs:
 
       - name: Build Chinese DMG
         run: |
-          # Download official MarkText release
           curl -L -o /tmp/marktext.dmg \
             "https://github.com/marktext/marktext/releases/download/v0.17.1/marktext-arm64.dmg"
           hdiutil attach /tmp/marktext.dmg -mountpoint /tmp/mnt -quiet
           cp -R /tmp/mnt/MarkText.app /tmp/MarkText-zh.app
           hdiutil detach /tmp/mnt -quiet
-
-          # Replace app.asar with our Chinese build
           npx asar extract /tmp/MarkText-zh.app/Contents/Resources/app.asar /tmp/extracted
           rm -rf /tmp/extracted/dist/electron/
           cp -r dist/electron/ /tmp/extracted/dist/electron/
           rm -f /tmp/app.asar
           npx asar pack /tmp/extracted /tmp/app.asar
           cp /tmp/app.asar /tmp/MarkText-zh.app/Contents/Resources/app.asar
-
-          # Sign and package (move to separate directory to avoid resource busy)
           mkdir -p /tmp/dmg-out
           codesign --deep --force --sign - /tmp/MarkText-zh.app
           sleep 2
@@ -55,52 +50,8 @@ jobs:
           gh release create ${{ github.ref_name }} \
             MarkText-zh-arm64.dmg \
             --repo ${{ github.repository }} \
-            --title "${{ github.ref_name }}" \
+            --title "MarkText v0.17.1 简体中文汉化版" \
             --notes "MarkText v0.17.1 简体中文汉化版" \
             --latest || \
           gh release upload ${{ github.ref_name }} MarkText-zh-arm64.dmg \
-            --repo ${{ github.repository }} --clobber
-
-  build-windows:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install dependencies
-        run: npm install --legacy-peer-deps --ignore-scripts
-
-      - name: Build webpack bundles
-        run: node .electron-vue/build.js
-
-      - name: Build Chinese Windows package
-        shell: pwsh
-        run: |
-          # Download official MarkText Windows release
-          $zipPath = "$env:TEMP\marktext-win.zip"
-          $extractPath = "$env:TEMP\marktext-win"
-          curl -L -o "$zipPath" "https://github.com/marktext/marktext/releases/download/v0.17.1/marktext-win.zip"
-          # Extract
-          Expand-Archive -Path $zipPath -DestinationPath $extractPath -Force
-          # Replace app.asar
-          npx asar extract "$extractPath\resources\app.asar" "$env:TEMP\extracted"
-          Remove-Item -Recurse -Force "$env:TEMP\extracted\dist\electron\" -ErrorAction SilentlyContinue
-          Copy-Item -Recurse dist\electron\ "$env:TEMP\extracted\dist\electron\"
-          npx asar pack "$env:TEMP\extracted" "$extractPath\resources\app.asar"
-          # Repackage as ZIP
-          Compress-Archive -Path "$extractPath\*" -DestinationPath MarkText-zh-win.zip -Force
-
-      - name: Upload to Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        shell: pwsh
-        run: |
-          gh release create ${{ github.ref_name }} MarkText-zh-win.zip `
-            --repo ${{ github.repository }} `
-            --title "${{ github.ref_name }}" `
-            --notes "MarkText v0.17.1 简体中文汉化版" `
-            --latest 2>&1 | Out-Null
-          gh release upload ${{ github.ref_name }} MarkText-zh-win.zip `
             --repo ${{ github.repository }} --clobber
