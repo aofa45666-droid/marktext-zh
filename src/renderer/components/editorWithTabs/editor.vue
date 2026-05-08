@@ -131,6 +131,7 @@ export default {
   computed: {
     ...mapState({
       preferences: state => state.preferences,
+      language: state => state.preferences.language,
       preferLooseListItem: state => state.preferences.preferLooseListItem,
       autoPairBracket: state => state.preferences.autoPairBracket,
       autoPairMarkdownSyntax: state => state.preferences.autoPairMarkdownSyntax,
@@ -370,6 +371,10 @@ export default {
       }
     },
 
+    language: function (value) {
+      FormatPicker.currentLanguage = value
+    },
+
     codeFontSize: function (value, oldValue) {
       if (value !== oldValue) {
         addCommonStyle({
@@ -499,6 +504,7 @@ export default {
       Muya.use(Transformer)
       Muya.use(ImageToolbar)
       Muya.use(FormatPicker)
+      FormatPicker.currentLanguage = this.language
       Muya.use(FrontMenu)
       Muya.use(LinkTools, {
         jumpClick: this.jumpClick

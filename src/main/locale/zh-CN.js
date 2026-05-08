@@ -165,6 +165,8 @@ const zhCN = {
   'Insert Paragraph Before': '前插段落',
   'Insert Paragraph After': '后插段落',
   'Spelling...': '拼写检查...',
+  'Change Language...': '切换语言...',
+  'Edit Dictionary...': '编辑字典...',
   Delete: '删除',
   'Sort by': '排序方式',
   'Creation time': '创建时间',

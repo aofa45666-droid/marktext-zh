@@ -37,7 +37,7 @@ export const showEditorContextMenu = (win, event, params, isSpellcheckerEnabled,
     const locale = language ? loadLocale(language) : {}
     const menu = new Menu()
     if (isSpellcheckerEnabled) {
-      const spellingSubmenu = spellcheckMenuBuilder(isMisspelled, misspelledWord, dictionarySuggestions)
+      const spellingSubmenu = spellcheckMenuBuilder(isMisspelled, misspelledWord, dictionarySuggestions, locale)
       menu.append(new MenuItem({
         label: t(locale, 'Spelling...'),
         submenu: spellingSubmenu

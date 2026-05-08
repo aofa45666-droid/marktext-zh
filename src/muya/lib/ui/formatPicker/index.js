@@ -1,6 +1,6 @@
 import BaseFloat from '../baseFloat'
 import { patch, h } from '../../parser/render/snabbdom'
-import icons from './config'
+import { icons, zhCNTooltips, enTooltips, shortcuts } from './config'
 
 import './index.css'
 
@@ -16,6 +16,7 @@ const defaultOptions = {
 
 class FormatPicker extends BaseFloat {
   static pluginName = 'formatPicker'
+  static currentLanguage = 'en'
 
   constructor (muya, options = {}) {
     const name = 'ag-format-picker'
@@ -48,12 +49,12 @@ class FormatPicker extends BaseFloat {
   }
 
   render () {
-    const { icons, oldVnode, formatContainer, formats } = this
+    const { oldVnode, formatContainer, formats } = this
+    const tooltips = FormatPicker.currentLanguage === 'zh-CN' ? zhCNTooltips : enTooltips
     const children = icons.map(i => {
       let icon
       let iconWrapperSelector
       if (i.icon) {
-        // SVG icon Asset
         iconWrapperSelector = 'div.icon-wrapper'
         icon = h('i.icon', h('i.icon-inner', {
           style: {
@@ -68,9 +69,10 @@ class FormatPicker extends BaseFloat {
       if (formats.some(f => f.type === i.type || f.type === 'html_tag' && f.tag === i.type)) {
         itemSelector += '.active'
       }
+      const tooltip = `${tooltips[i.type] || enTooltips[i.type]} ${shortcuts[i.type]}`
       return h(itemSelector, {
         attrs: {
-          title: `${i.tooltip} ${i.shortcut}`
+          title: tooltip
         },
         on: {
           click: event => {
