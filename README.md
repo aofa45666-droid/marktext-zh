@@ -1,6 +1,6 @@
 # MarkText v0.17.1简体中文汉化版 （仅macOS）
 
-![P0]([https://github.com/aofa45666-droid/marktext-zh/blob/main/QQ20260508-223444.png?raw=true](https://github.com/aofa45666-droid/marktext-zh/blob/main/test/1778254423679_d.png))
+![P0](https://github.com/aofa45666-droid/marktext-zh/blob/main/test/1778254423679_d.png)
 
 
 **开源 Markdown 编辑器 · 简体中文**
