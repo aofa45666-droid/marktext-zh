@@ -1,3 +1,6 @@
+> **中文版**：本项目已进行简体中文汉化，详见 [README-zh.md](README-zh.md)。\
+> **Chinese i18n**: This fork includes full Simplified Chinese localization. See [README-zh.md](README-zh.md).
+
 <p align="center"><img src="static/logo-small.png" alt="MarkText" width="100" height="100"></p>
 
 <h1 align="center">MarkText</h1>
