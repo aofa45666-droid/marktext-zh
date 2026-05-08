@@ -14,6 +14,8 @@
 | Linux | `MarkText-zh-x86_64.AppImage` | Linux 桌面版 |
 
 > ⬇️ **下载地址**：前往 [Releases 页面](https://github.com/aofa45666-droid/marktext-zh/releases) 选择最新版本，下载对应平台的安装包。
+>
+> ⚠️ 首次访问时 Releases 可能为空。需要先触发一次自动构建（见下方「从源码构建」或推送版本标签 `git push origin v0.17.1-zh`），构建完成后安装包会自动发布到此页面。
 
 ---
 
