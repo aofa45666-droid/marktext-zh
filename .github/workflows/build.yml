@@ -1,0 +1,64 @@
+name: Build MarkText-zh
+
+on:
+  push:
+    branches: [main]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-mac:
+    runs-on: macos-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+      - name: Build and package
+        run: npm run release:mac
+      - name: Upload DMG
+        uses: actions/upload-artifact@v4
+        with:
+          name: MarkText-zh-mac
+          path: build/*.dmg
+
+  build-windows:
+    runs-on: windows-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+      - name: Build and package
+        run: npm run release:win
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: MarkText-zh-win
+          path: build/*.exe
+
+  build-linux:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+      - name: Build and package
+        run: npm run release:linux
+      - name: Upload AppImage
+        uses: actions/upload-artifact@v4
+        with:
+          name: MarkText-zh-linux
+          path: build/*.AppImage
