@@ -1,4 +1,4 @@
-name: Build
+name: Build and Release
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - 'v*'
 
 jobs:
-  build:
+  build-mac:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
@@ -14,42 +14,73 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install dependencies (skip native build)
-        run: npm install --legacy-peer-deps --ignore-scripts
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
 
       - name: Build webpack bundles
         run: node .electron-vue/build.js
 
-      - name: Download official MarkText release
+      - name: Build Chinese DMG
         run: |
-          curl -L -o /tmp/marktext.dmg "https://github.com/marktext/marktext/releases/download/v0.17.1/marktext-arm64.dmg"
+          # Download official MarkText release
+          curl -L -o /tmp/marktext.dmg \
+            "https://github.com/marktext/marktext/releases/download/v0.17.1/marktext-arm64.dmg"
           hdiutil attach /tmp/marktext.dmg -mountpoint /tmp/mnt -quiet
-          cp -R /tmp/mnt/MarkText.app /tmp/MarkText.app
+          cp -R /tmp/mnt/MarkText.app /tmp/MarkText-zh.app
           hdiutil detach /tmp/mnt -quiet
 
-      - name: Replace with Chinese build
-        run: |
-          # Extract original app.asar
-          rm -rf /tmp/extracted
-          npx asar extract /tmp/MarkText.app/Contents/Resources/app.asar /tmp/extracted
-          # Replace dist/electron/ with our build
+          # Replace app.asar with our Chinese build
+          npx asar extract /tmp/MarkText-zh.app/Contents/Resources/app.asar /tmp/extracted
           rm -rf /tmp/extracted/dist/electron/
           cp -r dist/electron/ /tmp/extracted/dist/electron/
-          # Re-pack asar
           rm -f /tmp/app.asar
           npx asar pack /tmp/extracted /tmp/app.asar
-          cp /tmp/app.asar /tmp/MarkText.app/Contents/Resources/app.asar
+          cp /tmp/app.asar /tmp/MarkText-zh.app/Contents/Resources/app.asar
 
-      - name: Sign app (ad-hoc)
-        run: codesign --deep --force --sign - /tmp/MarkText.app
+          # Sign and package
+          codesign --deep --force --sign - /tmp/MarkText-zh.app
+          hdiutil create -volname "MarkText-zh" -srcfolder /tmp/MarkText-zh.app \
+            -ov -format UDZO MarkText-zh-arm64.dmg
 
-      - name: Package DMG
+      - name: Upload to Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          mkdir -p build
-          hdiutil create -volname "MarkText-zh" -srcfolder /tmp/MarkText.app -ov -format UDZO build/MarkText-zh-arm64.dmg
+          gh release upload ${{ github.ref_name }} MarkText-zh-arm64.dmg \
+            --repo ${{ github.repository }} --clobber
 
-      - name: Upload DMG
-        uses: actions/upload-artifact@v4
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          name: MarkText-zh-mac
-          path: build/*.dmg
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Build webpack bundles
+        run: node .electron-vue/build.js
+
+      - name: Build Chinese Windows package
+        run: |
+          # Download official MarkText Windows release
+          curl -L -o /tmp/marktext-win.zip `
+            "https://github.com/marktext/marktext/releases/download/v0.17.1/marktext-win.zip"
+          # Extract
+          Expand-Archive -Path /tmp/marktext-win.zip -DestinationPath /tmp/marktext-win
+          # Replace app.asar
+          npx asar extract /tmp/marktext-win/resources/app.asar /tmp/extracted
+          Remove-Item -Recurse -Force /tmp/extracted/dist/electron/
+          Copy-Item -Recurse dist/electron/ /tmp/extracted/dist/electron/
+          npx asar pack /tmp/extracted /tmp/marktext-win/resources/app.asar
+          # Repackage as ZIP
+          Compress-Archive -Path /tmp/marktext-win/* -DestinationPath MarkText-zh-win.zip
+
+      - name: Upload to Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload ${{ github.ref_name }} MarkText-zh-win.zip `
+            --repo ${{ github.repository }} --clobber
