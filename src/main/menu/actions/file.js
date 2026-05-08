@@ -58,7 +58,7 @@ const handleResponseForExport = async (e, { type, content, pathname, title, page
   const dirname = pathname ? path.dirname(pathname) : getPath('documents')
   let nakedFilename = pathname ? path.basename(pathname, '.md') : title
   if (!nakedFilename) {
-    nakedFilename = 'Untitled'
+    nakedFilename = '没想好叫什么'
   }
 
   const defaultPath = path.join(dirname, `${nakedFilename}${extension}`)
@@ -110,7 +110,7 @@ const handleResponseForSave = async (e, { id, filename, markdown, pathname, opti
   const win = BrowserWindow.fromWebContents(e.sender)
   let recommendFilename = getRecommendTitleFromMarkdownString(markdown)
   if (!recommendFilename) {
-    recommendFilename = filename || 'Untitled'
+    recommendFilename = filename || '没想好叫什么'
   }
 
   // If the file doesn't exist on disk add it to the recently used documents later
@@ -259,7 +259,7 @@ ipcMain.on('mt::response-file-save-as', async (e, { id, filename, markdown, path
   const win = BrowserWindow.fromWebContents(e.sender)
   let recommendFilename = getRecommendTitleFromMarkdownString(markdown)
   if (!recommendFilename) {
-    recommendFilename = filename || 'Untitled'
+    recommendFilename = filename || '没想好叫什么'
   }
 
   // If the file doesn't exist on disk add it to the recently used documents later

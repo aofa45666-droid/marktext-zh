@@ -10,7 +10,7 @@ export const defaultFileState = {
   isSaved: true,
   // Full path to the file or empty. If the value is empty the file doesn't exist on disk.
   pathname: '',
-  filename: 'Untitled-1',
+  filename: '没想好叫什么-1',
   markdown: '',
   encoding: {
     encoding: 'utf8',
@@ -93,7 +93,7 @@ export const getBlankFileState = (tabs, defaultEncoding = 'utf8', lineEnding = '
     lineEnding,
     adjustLineEndingOnSave: lineEnding.toLowerCase() === 'crlf',
     id,
-    filename: `Untitled-${++untitleId}`,
+    filename: `没想好叫什么-${++untitleId}`,
     markdown
   })
 }
