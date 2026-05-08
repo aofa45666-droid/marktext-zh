@@ -14,8 +14,8 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install dependencies
-        run: npm install --legacy-peer-deps
+      - name: Install dependencies (skip native build)
+        run: npm install --legacy-peer-deps --ignore-scripts
 
       - name: Build webpack bundles
         run: node .electron-vue/build.js
