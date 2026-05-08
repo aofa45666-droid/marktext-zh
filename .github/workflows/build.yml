@@ -5,6 +5,9 @@ on:
     tags:
       - 'v*'
 
+permissions:
+  contents: write
+
 jobs:
   build-mac:
     runs-on: macos-latest
@@ -78,7 +81,7 @@ jobs:
           # Download official MarkText Windows release
           $zipPath = "$env:TEMP\marktext-win.zip"
           $extractPath = "$env:TEMP\marktext-win"
-          Invoke-WebRequest -Uri "https://github.com/marktext/marktext/releases/download/v0.17.1/marktext-win.zip" -OutFile $zipPath
+          curl -L -o "$zipPath" "https://github.com/marktext/marktext/releases/download/v0.17.1/marktext-win.zip"
           # Extract
           Expand-Archive -Path $zipPath -DestinationPath $extractPath -Force
           # Replace app.asar
