@@ -1,91 +1,72 @@
 # MarkText 中文版
 
-> 基于 [MarkText](https://github.com/marktext/marktext) v0.17.1 的简体中文汉化版本
+开源 Markdown 编辑器 · 完整简体中文本地化
 
-MarkText 是一款开源、跨平台的 Markdown 编辑器。本项目在原版基础上进行了全面的简体中文本地化。**构建产物可在 macOS、Windows、Linux 上原生运行**（工作流配置三平台自动构建）。
+---
 
-## 汉化范围
+## 快速下载
 
-| 模块 | 说明 |
-|------|------|
-| ✅ 主菜单栏 | 文件、编辑、段落、格式、视图、窗口、主题、帮助，包括 macOS 应用菜单 |
-| ✅ 右键菜单 | 编辑器内右键菜单、标签页右键菜单、侧边栏右键菜单 |
-| ✅ 偏好设置 | 通用、编辑器、Markdown、主题、图片、拼写、快捷键 — 全部 7 个设置页面 |
-| ✅ 快捷键描述 | 快捷键设置页面中的完整命令描述列表 |
-| ✅ 格式工具栏 | 选中文字后浮现的加粗/斜体/下划线等按钮的 tooltip |
-| ✅ 退出保存对话框 | "是否保存更改"提示框及其按钮 |
-| ✅ 重命名覆盖提示 | 文件重命名冲突时的确认对话框 |
-| ✅ Element-UI 组件 | 按钮、对话框、选择器、日期选择器等 UI 组件文字 |
+| 平台 | 安装包 | 说明 |
+|------|--------|------|
+| macOS（Intel） | `MarkText-zh-x64.dmg` | Intel 芯片 Mac |
+| macOS（Apple Silicon） | `MarkText-zh-arm64.dmg` | M1/M2/M3/M4 Mac |
+| Windows | `MarkText-zh-Setup-x64.exe` | Windows 10/11 64位 |
+| Linux | `MarkText-zh-x86_64.AppImage` | Linux 桌面版 |
 
-> 偏好设置中的「界面语言」下拉框为原版自带的只读选项，实际语言跟随此汉化版固定为简体中文，不支持动态切换。
+> ⬇️ **下载地址**：前往 [Releases 页面](https://github.com/aofa45666-droid/marktext-zh/releases) 选择最新版本，下载对应平台的安装包。
 
-## 安装
+---
+
+## 安装方法
 
 ### macOS
 
-从 [Releases](https://github.com/YOUR_USERNAME/marktext-zh/releases) 下载 `MarkText-zh-*.dmg`，打开后拖入 Applications 文件夹。
+打开 `.dmg` 文件，将 MarkText 拖入「应用程序」文件夹。
+
+首次打开如果提示「无法验证开发者」，需要在「系统设置 → 隐私与安全性」中点击「仍要打开」。
 
 ### Windows
 
-下载 `MarkText-zh-*.exe`，双击安装。
+双击 `.exe` 安装包，按提示完成安装。安装过程中可选择关联 `.md` 文件。
 
 ### Linux
-
-下载 `MarkText-zh-*.AppImage`，赋予执行权限后运行：
 
 ```bash
 chmod +x MarkText-zh-*.AppImage
 ./MarkText-zh-*.AppImage
 ```
 
-**注**：各平台安装包由 GitHub Actions 自动构建，在 `Actions` 页面下载 Artifact 或在 Releases 页面获取。
+---
+
+## 汉化说明
+
+本版本基于 MarkText v0.17.1 源码进行中文本地化，所有界面文字已翻译为简体中文：
+
+- 主菜单栏、右键菜单
+- 偏好设置（全部 7 个页面）
+- 快捷键描述
+- 选中文字的格式工具栏提示
+- 退出保存对话框
+
+**注意**：偏好设置中的「界面语言」下拉框为只读选项，本版本固定为简体中文，不支持切换语言。
+
+---
 
 ## 从源码构建
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/marktext-zh.git
+git clone https://github.com/aofa45666-droid/marktext-zh.git
 cd marktext-zh
 npm install --legacy-peer-deps
-
-# macOS
-npm run release:mac
-
-# Windows
-npm run release:win
-
-# Linux
-npm run release:linux
+npm run release:mac      # macOS
+npm run release:win      # Windows
+npm run release:linux    # Linux
 ```
 
 构建产物在 `build/` 目录下。
 
-## 翻译维护
+---
 
-所有中文翻译集中在以下文件中，方便后续更新：
+## 许可证
 
-| 文件 | 内容 |
-|------|------|
-| `src/main/locale/zh-CN.js` | 主进程菜单、右键菜单 |
-| `src/main/locale/index.js` | 主进程语言加载器 |
-| `src/renderer/locale/settings-zh-CN.js` | 设置页面翻译 |
-| `src/renderer/commands/descriptions-zh-CN.js` | 快捷键描述翻译 |
-| `src/renderer/locale/index.js` | 渲染进程右键菜单翻译 |
-
-## 更新上游
-
-如需同步上游 MarkText 新版本：
-
-```bash
-git remote add upstream https://github.com/marktext/marktext.git
-git fetch upstream
-git merge upstream/v0.17.2   # 合并新版本
-# 如有冲突，保留我们的翻译文件，解决冲突后重新构建
-```
-
-## 致谢
-
-- [MarkText](https://github.com/marktext/marktext) — 优秀的开源 Markdown 编辑器
-
-## License
-
-[MIT](LICENSE)
+本项目基于 MIT 许可证发布。
